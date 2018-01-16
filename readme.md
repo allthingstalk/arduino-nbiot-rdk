@@ -1,4 +1,4 @@
-# arduino-lorawan-rdk
+# arduino-nbiot-rdk
 
 This repository contains experiment sketches for the AllThingsTalk NB-IoT Rapid Development Kit.
 
