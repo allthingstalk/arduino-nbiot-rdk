@@ -40,6 +40,7 @@
 // AllThingsTalk Device
 const char* deviceid = "Ddjdc1aYskfXGva9z6gelQWO";
 const char* devicetoken = "spicy:4O3SMDqz3ygu80Nw7ybfJYdrR1FwCzN5fMFwuTD1";
+const char* apn = "iot.orange.be";
 
 ATT_NBIOT nbiot;
 PayloadBuilder payload(nbiot);
@@ -65,7 +66,7 @@ void setup()
   
   DEBUG_STREAM.println("Initializing and connecting... ");
 
-  nbiot.setAttDevice(deviceid, devicetoken);
+  nbiot.setAttDevice(deviceid, devicetoken, apn);
   nbiot.init(MODEM_STREAM, DEBUG_STREAM, MODEM_ON_OFF_PIN);
   
   if(nbiot.connect())
@@ -145,7 +146,7 @@ void readCoordinates()
   DEBUG_STREAM.println();
 }
 
-// send the GPS coordinates to the AllThingsTalk cloud
+// Send the GPS coordinates to the AllThingsTalk cloud
 void sendCoordinates(boolean val)
 {
   payload.reset();
