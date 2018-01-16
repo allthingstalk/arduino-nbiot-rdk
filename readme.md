@@ -9,6 +9,7 @@ External libraries are included in this repository for use of all sensors
 * [AirQuality2](https://github.com/MikeHg/AirQualitySensor/tree/d6cadaf21c6beae99fdd65bb037424ce6f855db1)
 * [MMA7660](https://github.com/Seeed-Studio/Accelerometer_MMA7660) (Accelerometer)
 * [TPH2](http://support.sodaq.com/sodaq-one/tph-v2/) Adafruit_Sensor and Adafruit_BME280
+* GPS
 
 ## Hardware
 

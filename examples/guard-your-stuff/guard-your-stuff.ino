@@ -37,11 +37,6 @@
 #define DISTANCE 30.0       // Minimal distance between two fixes to keep checking gps
 #define FIX_DELAY 60000     // Delay (ms) between checking gps coordinates
 
-// AllThingsTalk Device
-const char* deviceid = "Ddjdc1aYskfXGva9z6gelQWO";
-const char* devicetoken = "spicy:4O3SMDqz3ygu80Nw7ybfJYdrR1FwCzN5fMFwuTD1";
-const char* apn = "iot.orange.be";
-
 ATT_NBIOT nbiot;
 PayloadBuilder payload(nbiot);
 ATT_GPS gps(20,21);  // Reading GPS values from debugSerial connection with GPS
@@ -66,7 +61,6 @@ void setup()
   
   DEBUG_STREAM.println("Initializing and connecting... ");
 
-  nbiot.setAttDevice(deviceid, devicetoken, apn);
   nbiot.init(MODEM_STREAM, DEBUG_STREAM, MODEM_ON_OFF_PIN);
   
   if(nbiot.connect())
@@ -152,7 +146,7 @@ void sendCoordinates(boolean val)
   payload.reset();
   payload.addBoolean(val);
   payload.addGPS(gps.latitude, gps.longitude, gps.altitude);
-  payload.send(false);
+  payload.send();
   
   DEBUG_STREAM.print("lng: ");
   DEBUG_STREAM.print(gps.longitude, 4);
