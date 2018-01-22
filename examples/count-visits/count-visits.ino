@@ -19,6 +19,13 @@
  * limitations under the License.
  */
 
+/****
+ * Improve facility management by taking into account actual usage based
+ * on real time measurements.
+ * This experiment shows how a NB-IoT device can count visits to optimise
+ * cleaning based on usage rather than fixed rigid schedules.
+ */
+ 
 #include <PayloadBuilder.h>
 #include "ATT_NBIOT.h"
 
@@ -35,18 +42,18 @@ PayloadBuilder payload(nbiot);
 int pushButton = 20;          
 int doorSensor = 4;
 
-#define SEND_MAX_EVERY 30000 // the (mimimum) time between 2 consecutive updates of visit counts
+#define SEND_MAX_EVERY 30000 // The (mimimum) time between 2 consecutive updates of visit counts
 
 bool prevButtonState;
 bool prevDoorSensor;
 
-short visitCount = 0;  // keep track of the nr of visitors
+short visitCount = 0;  // Keep track of the nr of visitors
 short prevVisitCountSent = 0;
-unsigned long lastSentAt = 0;  // the time when the last visitcount was sent to the cloud
+unsigned long lastSentAt = 0;  // Time when the last visitcount was sent to the cloud
 
 void setup() 
 {
-  pinMode(pushButton, INPUT);  // initialize the digital pin as an input
+  pinMode(pushButton, INPUT);  // Initialize the digital pin as an input
   pinMode(doorSensor, INPUT);
 
   delay(3000);
@@ -73,8 +80,9 @@ void setup()
   DEBUG_STREAM.println(" milliseconds, if changed");
   DEBUG_STREAM.println();
   
-  prevButtonState = digitalRead(pushButton);  // read the initial state
-  prevDoorSensor = digitalRead(doorSensor);   // read the initial state
+  // Read the initial states
+  prevButtonState = digitalRead(pushButton);
+  prevDoorSensor = digitalRead(doorSensor);
 }
 
 void sendVisitCount(int16_t val)
@@ -93,12 +101,12 @@ void loop()
   processDoorSensor();
   delay(100);
   
-  // only send a message when something has changed and SEND_MAX_EVERY has been exceeded
+  // Only send a message when something has changed and minimum send time has been exceeded
   if(prevVisitCountSent != visitCount && lastSentAt + SEND_MAX_EVERY <= millis())
     sendVisitCount(visitCount);
 }
 
-// check the state of the door sensor
+// Check the state of the door sensor
 void processDoorSensor()
 {
   bool sensorRead = digitalRead(doorSensor);                         
@@ -108,7 +116,7 @@ void processDoorSensor()
     if(sensorRead == true)
     {
       DEBUG_STREAM.println("Door closed");
-      visitCount++;  // the door was opened and closed again, so increment the counter
+      visitCount++;  // The door was opened and closed again, so increment the counter
 		  DEBUG_STREAM.print("VisitCount: ");
 		  DEBUG_STREAM.println(visitCount);
     }
@@ -117,11 +125,11 @@ void processDoorSensor()
   }
 }
 
-// check the state of the button
+// Check the state of the button
 void processButton()
 {
-  bool sensorRead = digitalRead(pushButton);  // check the state of the button
-  if (prevButtonState != sensorRead)          // verify if value has changed
+  bool sensorRead = digitalRead(pushButton);  // Check the state of the button
+  if (prevButtonState != sensorRead)          // Verify if value has changed
   {
     prevButtonState = sensorRead;
     if(sensorRead == true)                                         

@@ -18,6 +18,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+ 
+/****
+ * Get notified when someone is tampering with one of your favorite paintings.
+ * This experiment shows how a NB-IoT device can be used to detect unexpected
+ * movement of an object and send out notifications to its owner.
+ * Furthermore it shows how you can track the object using its GEO location.
+ */
 
 #include <PayloadBuilder.h>
 #include "ATT_NBIOT.h"

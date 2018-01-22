@@ -19,6 +19,13 @@
  * limitations under the License.
  */
 
+/****
+ * This experiments shows how a NB-IoT device can be used to monitor the
+ * quality of your surrounding environment.
+ * Measure air quality, noise levels, pressure, humidity, temperature and
+ * light intensity to improve your quality of living.
+ */
+ 
 #include <PayloadBuilder.h>
 #include "ATT_NBIOT.h"
 
@@ -55,7 +62,7 @@ int16_t airValue;
 
 void setup() 
 {
-  pinMode(GROVEPWR, OUTPUT);  // turn on the power for the secondary row of grove connectors
+  pinMode(GROVEPWR, OUTPUT);  // Turn on the power for the secondary row of grove connectors
   digitalWrite(GROVEPWR, HIGH);
 
   delay(3000);
@@ -113,7 +120,7 @@ void readSensors()
     
     soundValue = analogRead(SoundSensorPin);
     lightValue = analogRead(LightSensorPin);
-    lightValue = lightValue * 3.3 / 1023;  // convert to lux based on the voltage that the sensor receives
+    lightValue = lightValue * 3.3 / 1023;  // Convert to lux based on the voltage that the sensor receives
     lightValue = pow(10, lightValue);
     
     temp = tph.readTemperature();
