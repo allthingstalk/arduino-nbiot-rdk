@@ -1,5 +1,5 @@
 {
-  "comment": "Guard your stuff example",
+  "comment": "Guard your stuff experiment",
   "sense": [
     {"asset": "motion", "value": { "byte": 0, "type": "boolean"}},
     {"asset": "gps", "value": {

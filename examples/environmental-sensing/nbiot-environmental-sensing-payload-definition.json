@@ -1,5 +1,5 @@
 {
-  "comment" : "Environmental sensing example",
+  "comment" : "Environmental sensing experiment",
   "sense": [
     {"comment": "LOUDNESS", "asset": "loudness", "value": {"byte" : 0, "byteorder": "big", "bytelength": 4, "type": "number"}},
     {"comment": "LIGHT", "asset": "light", "value": {"byte" : 4, "byteorder": "big", "bytelength": 4, "type": "number"}},
