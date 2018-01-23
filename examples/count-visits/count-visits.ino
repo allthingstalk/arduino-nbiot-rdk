@@ -26,7 +26,10 @@
  * cleaning based on usage rather than fixed rigid schedules.
  */
  
-#include <PayloadBuilder.h>
+// Uncomment your selected method for sending data
+#define CBOR
+//#define BINARY
+
 #include "ATT_NBIOT.h"
 
 // Mbili support
@@ -37,7 +40,16 @@
 #define baud 9600
 
 ATT_NBIOT nbiot;
-PayloadBuilder payload(nbiot);
+
+#ifdef CBOR
+  #include <CborBuilder.h>
+  CborBuilder payload(nbiot);
+#endif
+
+#ifdef BINARY
+  #include <PayloadBuilder.h>
+  PayloadBuilder payload(nbiot);
+#endif
 
 int pushButton = 20;          
 int doorSensor = 4;
@@ -88,7 +100,16 @@ void setup()
 void sendVisitCount(int16_t val)
 {
   payload.reset();
+  
+  #ifdef CBOR  // Send data using Cbor
+  payload.map(1);
+  payload.addInteger(val, "counter");
+  #endif
+  
+  #ifdef BINARY  // Send data using a Binary payload and our ABCL language
   payload.addInteger(val);
+  #endif  
+  
   payload.send();
   
   lastSentAt = millis();

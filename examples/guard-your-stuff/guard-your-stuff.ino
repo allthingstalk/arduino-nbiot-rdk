@@ -25,8 +25,11 @@
  * movement of an object and send out notifications to its owner.
  * Furthermore it shows how you can track the object using its GEO location.
  */
+ 
+// Uncomment your selected method for sending data
+#define CBOR
+//#define BINARY
 
-#include <PayloadBuilder.h>
 #include "ATT_NBIOT.h"
 #include <ATT_GPS.h>
 
@@ -45,7 +48,17 @@
 #define FIX_DELAY 60000     // Delay (ms) between checking gps coordinates
 
 ATT_NBIOT nbiot;
-PayloadBuilder payload(nbiot);
+
+#ifdef CBOR
+  #include <CborBuilder.h>
+  CborBuilder payload(nbiot);
+#endif
+
+#ifdef BINARY
+  #include <PayloadBuilder.h>
+  PayloadBuilder payload(nbiot);
+#endif
+
 ATT_GPS gps(20,21);  // Reading GPS values from debugSerial connection with GPS
 
 MMA7660 accelerometer;
@@ -151,8 +164,18 @@ void readCoordinates()
 void sendCoordinates(boolean val)
 {
   payload.reset();
+  
+  #ifdef CBOR  // Send data using Cbor
+  payload.map(2);
+  payload.addBoolean(val, "motion");
+  payload.addGPS(gps.latitude, gps.longitude, gps.altitude, "gps");
+  #endif
+  
+  #ifdef BINARY  // Send data using a Binary payload and our ABCL language
   payload.addBoolean(val);
   payload.addGPS(gps.latitude, gps.longitude, gps.altitude);
+  #endif
+    
   payload.send();
   
   DEBUG_STREAM.print("lng: ");

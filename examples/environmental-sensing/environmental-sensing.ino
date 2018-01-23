@@ -25,8 +25,11 @@
  * Measure air quality, noise levels, pressure, humidity, temperature and
  * light intensity to improve your quality of living.
  */
+
+// Uncomment your selected method for sending data
+#define CBOR
+//#define BINARY
  
-#include <PayloadBuilder.h>
 #include "ATT_NBIOT.h"
 
 #include <Wire.h>
@@ -42,7 +45,16 @@
 #define baud 9600
 
 ATT_NBIOT nbiot;
-PayloadBuilder payload(nbiot);
+
+#ifdef CBOR
+  #include <CborBuilder.h>
+  CborBuilder payload(nbiot);
+#endif
+
+#ifdef BINARY
+  #include <PayloadBuilder.h>
+  PayloadBuilder payload(nbiot);
+#endif
 
 #define AirQualityPin A0
 #define LightSensorPin A2
@@ -115,32 +127,46 @@ void initSensors()
 
 void readSensors()
 {
-    DEBUG_STREAM.println("Start reading sensors");
-    DEBUG_STREAM.println("---------------------");
+  DEBUG_STREAM.println("Start reading sensors");
+  DEBUG_STREAM.println("---------------------");
     
-    soundValue = analogRead(SoundSensorPin);
-    lightValue = analogRead(LightSensorPin);
-    lightValue = lightValue * 3.3 / 1023;  // Convert to lux based on the voltage that the sensor receives
-    lightValue = pow(10, lightValue);
+  soundValue = analogRead(SoundSensorPin);
+  lightValue = analogRead(LightSensorPin);
+  lightValue = lightValue * 3.3 / 1023;  // Convert to lux based on the voltage that the sensor receives
+  lightValue = pow(10, lightValue);
     
-    temp = tph.readTemperature();
-    hum = tph.readHumidity();
-    pres = tph.readPressure()/100.0;
+  temp = tph.readTemperature();
+  hum = tph.readHumidity();
+  pres = tph.readPressure()/100.0;
     
-    airValue = airqualitysensor.getRawData();
+  airValue = airqualitysensor.getRawData();
 }
 
 void sendSensorValues()
 {
   payload.reset();
+  
+  #ifdef CBOR  // Send data using Cbor
+  payload.map(6);
+  payload.addNumber(soundValue, "loudness");
+  payload.addNumber(lightValue, "light");
+  payload.addNumber(temp, "temperature");
+  payload.addNumber(hum, "humidity");
+  payload.addNumber(pres, "pressure");
+  payload.addInteger(airValue, "air_quality");
+  #endif
+
+  #ifdef BINARY  // Send data using a Binary payload and our ABCL language
   payload.addNumber(soundValue);
   payload.addNumber(lightValue);
   payload.addNumber(temp);
   payload.addNumber(hum);
   payload.addNumber(pres);
   payload.addInteger(airValue);
-
+  #endif
+  
   payload.send();
+  
 }
 
 void displaySensorValues()

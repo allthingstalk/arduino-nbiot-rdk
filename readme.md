@@ -20,3 +20,11 @@ Download the source code and copy the content of the zip file to your arduino li
 * `guard-your-stuff` get notified and track a valuable object when it moves
 * `count-visits` count visits for better facility maintenance
 * `environmental-sensing` measure your surrounding environment
+
+> By default, the experiments will use Cbor to send data. You can toggle to a [binary payload]() (and decoding file at the receiving end) by (un)commenting your preferred method.
+
+```
+// Uncomment your selected method for sending data
+#define CBOR
+//#define BINARY
+```
