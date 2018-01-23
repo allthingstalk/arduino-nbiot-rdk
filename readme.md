@@ -17,6 +17,8 @@ Download the source code and copy the content of the zip file to your arduino li
 
 ## Experiment sketches
 
+When running one of these experiments, make sure you have set your _deviceid_ and _devicetoken_ in the [`keys.h`](https://github.com/allthingstalk/arduino-nbiot-sdk/blob/master/keys.h) file of the [arduino-nbiot-sdk](https://github.com/allthingstalk/arduino-nbiot-sdk).
+
 * `guard-your-stuff` get notified and track a valuable object when it moves
 * `count-visits` count visits for better facility maintenance
 * `environmental-sensing` measure your surrounding environment
