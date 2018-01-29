@@ -26,7 +26,7 @@
  * light intensity to improve your quality of living.
  */
 
-// Uncomment your selected method for sending data
+// Select your preferred method of sending data
 #define CBOR
 //#define BINARY
  

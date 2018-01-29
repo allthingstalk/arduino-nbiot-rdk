@@ -26,7 +26,7 @@
  * Furthermore it shows how you can track the object using its GEO location.
  */
  
-// Uncomment your selected method for sending data
+// Selected your preferred method of sending data
 #define CBOR
 //#define BINARY
 

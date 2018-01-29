@@ -26,7 +26,7 @@
  * cleaning based on usage rather than fixed rigid schedules.
  */
  
-// Uncomment your selected method for sending data
+// Select your preferred method of sending data
 #define CBOR
 //#define BINARY
 
