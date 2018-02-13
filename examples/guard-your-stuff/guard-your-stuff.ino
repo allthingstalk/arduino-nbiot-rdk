@@ -63,6 +63,7 @@ ATT_GPS gps(20,21);  // Reading GPS values from debugSerial connection with GPS
 
 MMA7660 accelerometer;
 bool moving = false;  // Set given data from both accelerometer and gps
+bool firstMotion = true;
 
 // variables for the coordinates (GPS)
 float prevLatitude;
@@ -112,14 +113,24 @@ void loop()
 
   if(moving && sendNextAt < millis())  // We waited long enough to check new fix
   {
+    // Send motion true before we try to find coordinates
+    if(firstMotion)
+    {
+      DEBUG_STREAM.println("Accelerometer movement detected");
+      sendMotion(true);
+      firstMotion = false;
+    }
+  
+    // Start looking for coordinates
     readCoordinates();
     
     if(gps.calcDistance(prevLatitude, prevLongitude) <= DISTANCE)  // We did not move much. Back to checking accelerometer for movement
     {
       DEBUG_STREAM.print("Less than ");
       DEBUG_STREAM.print(DISTANCE);
-      DEBUG_STREAM.println(" movement in last 5 minutes");
+      DEBUG_STREAM.println("m movement in last interval");
       moving = false;
+      firstMotion = true;  // Reset
       sendCoordinates(false);  // Send fix and motion false
     }
     else  // Update and send new coordinates
@@ -160,8 +171,8 @@ void readCoordinates()
   DEBUG_STREAM.println();
 }
 
-// Send the GPS coordinates to the AllThingsTalk cloud
-void sendCoordinates(boolean val)
+// Send GPS coordinates and motion to the AllThingsTalk cloud
+void sendCoordinates(bool val)
 {
   payload.reset();
   
@@ -186,4 +197,21 @@ void sendCoordinates(boolean val)
   DEBUG_STREAM.print(gps.altitude);
   DEBUG_STREAM.print(", time: ");
   DEBUG_STREAM.println(gps.timestamp);
+}
+
+// Send motion alone
+void sendMotion(bool val)
+{
+  payload.reset();
+  
+  #ifdef CBOR
+  payload.map(1);
+  payload.addBoolean(val, "motion");
+  #endif
+  
+  #ifdef BINARY
+  payload.addBoolean(val);
+  #endif
+    
+  payload.send();
 }
