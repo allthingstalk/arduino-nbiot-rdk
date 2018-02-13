@@ -138,6 +138,13 @@ void ATT_GPS::clearBufferArray()
   count = 0;
 }
 
+void ATT_GPS::reset()
+{
+  latitude = 0.0;
+  longitude = 0.0;
+  altitude = 0.0;
+}
+
 /****
  * Function to calculate the distance between two points
  */

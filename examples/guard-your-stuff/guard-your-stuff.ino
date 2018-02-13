@@ -63,7 +63,6 @@ ATT_GPS gps(20,21);  // Reading GPS values from debugSerial connection with GPS
 
 MMA7660 accelerometer;
 bool moving = false;  // Set given data from both accelerometer and gps
-bool firstMotion = true;
 
 // variables for the coordinates (GPS)
 float prevLatitude;
@@ -113,15 +112,8 @@ void loop()
 
   if(moving && sendNextAt < millis())  // We waited long enough to check new fix
   {
-    // Send motion true before we try to find coordinates
-    if(firstMotion)
-    {
-      DEBUG_STREAM.println("Accelerometer movement detected");
-      sendMotion(true);
-      firstMotion = false;
-    }
-  
     // Start looking for coordinates
+    DEBUG_STREAM.println("Movement detected. Searching GPS fix");
     readCoordinates();
     
     if(gps.calcDistance(prevLatitude, prevLongitude) <= DISTANCE)  // We did not move much. Back to checking accelerometer for movement
@@ -129,15 +121,18 @@ void loop()
       DEBUG_STREAM.print("Less than ");
       DEBUG_STREAM.print(DISTANCE);
       DEBUG_STREAM.println("m movement in last interval");
+      
+      sendCoordinatesAndMotion(false);  // Send fix and motion false
+      
+      // Reset parameters
       moving = false;
-      firstMotion = true;  // Reset
-      sendCoordinates(false);  // Send fix and motion false
+      gps.reset();
     }
     else  // Update and send new coordinates
     {
       prevLatitude = gps.latitude;
       prevLongitude = gps.longitude;
-      sendCoordinates(true);  // Send fix and motion true
+      sendCoordinatesAndMotion(true);  // Send fix and motion true
     }
     sendNextAt = millis() + FIX_DELAY;  // Update time
   }
@@ -172,7 +167,7 @@ void readCoordinates()
 }
 
 // Send GPS coordinates and motion to the AllThingsTalk cloud
-void sendCoordinates(bool val)
+void sendCoordinatesAndMotion(bool val)
 {
   payload.reset();
   
@@ -197,21 +192,4 @@ void sendCoordinates(bool val)
   DEBUG_STREAM.print(gps.altitude);
   DEBUG_STREAM.print(", time: ");
   DEBUG_STREAM.println(gps.timestamp);
-}
-
-// Send motion alone
-void sendMotion(bool val)
-{
-  payload.reset();
-  
-  #ifdef CBOR
-  payload.map(1);
-  payload.addBoolean(val, "motion");
-  #endif
-  
-  #ifdef BINARY
-  payload.addBoolean(val);
-  #endif
-    
-  payload.send();
 }

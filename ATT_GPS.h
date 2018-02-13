@@ -32,6 +32,7 @@ class ATT_GPS {
     float calcDistance(float flat1, float flon1, float flat2, float flon2);
     float calcDistance(float flat1, float flon1);  // distance to current coordinates
     void setStream(SoftwareSerial& SoftSerial);
+    void reset();
     
     // Variables for the coordinates (GPS)
     float latitude;
