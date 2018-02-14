@@ -44,6 +44,8 @@
 
 #define baud 9600
 
+#define SEND_EVERY 300000  // Send every 300 seconds
+
 ATT_NBIOT nbiot;
 
 #ifdef CBOR
@@ -59,8 +61,6 @@ ATT_NBIOT nbiot;
 #define AirQualityPin A0
 #define LightSensorPin A2
 #define SoundSensorPin A4
-
-#define SEND_EVERY 30000
 
 AirQuality2 airqualitysensor;
 Adafruit_BME280 tph; // I2C
@@ -101,16 +101,18 @@ void setup()
   initSensors();
 }
 
+unsigned long ctime = 0;
 void loop() 
 {
-  readSensors();
-  displaySensorValues();
-  sendSensorValues();
-  
-  DEBUG_STREAM.print("Delay for: ");
-  DEBUG_STREAM.println(SEND_EVERY);
-  DEBUG_STREAM.println();
-  delay(SEND_EVERY);
+  unsigned long curTime = millis() + SEND_EVERY;  // Add interval to make sure data is send on startup
+  if (curTime > (ctime + SEND_EVERY))
+  {
+    readSensors();
+    displaySensorValues();
+    sendSensorValues();
+    
+    ctime = curTime;
+  }  
 }
 
 void initSensors()
