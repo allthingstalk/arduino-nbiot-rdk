@@ -17,7 +17,12 @@ Download the source code and copy the content of the zip file to your arduino li
 
 ## Experiment sketches
 
-When running one of these experiments, make sure you have set your _deviceid_ and _devicetoken_ in the [`keys.h`](https://github.com/allthingstalk/arduino-nbiot-sdk/blob/master/keys.h) file of the [arduino-nbiot-sdk](https://github.com/allthingstalk/arduino-nbiot-sdk).
+> Make sure your device credentials are set, either globally in the **keys.h** file of the _arduino-nbiot-sdk_ or locally in your sketch.
+
+* `ATT_NBIOT device("your_device_id", "your_device_token");` will use the provided local credentials.
+* `ATT_NBIOT device;` will use the global credentials from the **keys.h** file
+
+Three experiments are provided
 
 * `guard-your-stuff` get notified and track a valuable object when it moves
 * `count-visits` count visits for better facility maintenance
@@ -26,7 +31,7 @@ When running one of these experiments, make sure you have set your _deviceid_ an
 > By default, the experiments will use Cbor to send data. You can toggle to a [binary payload]() (and decoding file at the receiving end) by (un)commenting your preferred method.
 
 ```
-// Uncomment your selected method for sending data
+// Select your preferred method of sending data
 #define CBOR
 //#define BINARY
 ```

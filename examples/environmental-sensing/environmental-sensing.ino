@@ -46,16 +46,16 @@
 
 #define SEND_EVERY 300000  // Send every 300 seconds
 
-ATT_NBIOT nbiot;
+ATT_NBIOT device;
 
 #ifdef CBOR
   #include <CborBuilder.h>
-  CborBuilder payload(nbiot);
+  CborBuilder payload(device);
 #endif
 
 #ifdef BINARY
   #include <PayloadBuilder.h>
-  PayloadBuilder payload(nbiot);
+  PayloadBuilder payload(device);
 #endif
 
 #define AirQualityPin A0
@@ -84,9 +84,9 @@ void setup()
   
   DEBUG_STREAM.println("Initializing and connecting... ");
 
-  nbiot.init(MODEM_STREAM, DEBUG_STREAM, MODEM_ON_OFF_PIN);
+  device.init(MODEM_STREAM, DEBUG_STREAM, MODEM_ON_OFF_PIN);
   
-  if(nbiot.connect())
+  if(device.connect())
     DEBUG_STREAM.println("Connected!");
   else
   {

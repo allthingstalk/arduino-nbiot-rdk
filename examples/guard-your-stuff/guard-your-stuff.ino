@@ -47,16 +47,16 @@
 #define DISTANCE 30.0       // Minimal distance between two fixes to keep checking gps
 #define FIX_DELAY 60000     // Delay (ms) between checking gps coordinates
 
-ATT_NBIOT nbiot;
+ATT_NBIOT device;
 
 #ifdef CBOR
   #include <CborBuilder.h>
-  CborBuilder payload(nbiot);
+  CborBuilder payload(device);
 #endif
 
 #ifdef BINARY
   #include <PayloadBuilder.h>
-  PayloadBuilder payload(nbiot);
+  PayloadBuilder payload(device);
 #endif
 
 ATT_GPS gps(20,21);  // Reading GPS values from debugSerial connection with GPS
@@ -81,9 +81,9 @@ void setup()
   
   DEBUG_STREAM.println("Initializing and connecting... ");
 
-  nbiot.init(MODEM_STREAM, DEBUG_STREAM, MODEM_ON_OFF_PIN);
+  device.init(MODEM_STREAM, DEBUG_STREAM, MODEM_ON_OFF_PIN);
   
-  if(nbiot.connect())
+  if(device.connect())
     DEBUG_STREAM.println("Connected!");
   else
   {
@@ -95,6 +95,7 @@ void setup()
   DEBUG_STREAM.println("-- Guard your stuff NB-IoT experiment --");
   DEBUG_STREAM.println();
 
+  DEBUG_STREAM.println("Getting initial GPS fix");
   readCoordinates();  // Get initial gps fix
   accelerometer.getXYZ(&prevX, &prevY, &prevZ);  // Get initial accelerometer state
 
