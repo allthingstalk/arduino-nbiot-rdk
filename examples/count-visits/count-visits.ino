@@ -51,8 +51,8 @@ ATT_NBIOT device;
   PayloadBuilder payload(device);
 #endif
 
-int pushButton = 20;          
-int doorSensor = 4;
+int pushButton = 20;
+int doorSensor = 4;  // Connect the magnetic door sensor to D1 and GND on the screw terminal
 
 #define SEND_MAX_EVERY 30000 // The (mimimum) time between 2 consecutive updates of visit counts
 
@@ -66,7 +66,7 @@ unsigned long lastSentAt = 0;  // Time when the last visitcount was sent to the 
 void setup() 
 {
   pinMode(pushButton, INPUT);  // Initialize the digital pin as an input
-  pinMode(doorSensor, INPUT);
+  pinMode(doorSensor, INPUT_PULLUP);
 
   delay(3000);
 
@@ -134,7 +134,7 @@ void processDoorSensor()
   if(prevDoorSensor != sensorRead)
   {
     prevDoorSensor = sensorRead;
-    if(sensorRead == true)
+    if(sensorRead == false)
     {
       DEBUG_STREAM.println("Door closed");
       visitCount++;  // The door was opened and closed again, so increment the counter
