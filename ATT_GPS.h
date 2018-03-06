@@ -27,7 +27,9 @@ class ATT_GPS {
     // Constructors
     ATT_GPS(int p1,int p2);
     
-    bool readCoordinates();
+    bool readCoordinates(int amount);
+    void readCoordinates();
+    bool readCoordinate();
     float convertDegrees(float input);
     float calcDistance(float flat1, float flon1, float flat2, float flon2);
     float calcDistance(float flat1, float flon1);  // distance to current coordinates
@@ -35,8 +37,8 @@ class ATT_GPS {
     void reset();
     
     // Variables for the coordinates (GPS)
-    float latitude;
-    float longitude;
+    float latitude = 48.8606;  // default coordinates of the Louvre in Paris
+    float longitude = 2.3376;
     float altitude;
     float timestamp;
     

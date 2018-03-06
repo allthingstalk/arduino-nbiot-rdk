@@ -41,8 +41,6 @@
 #define MODEM_STREAM Serial1
 #define MODEM_ON_OFF_PIN 23
 
-#define baud 9600
-
 #define ACCEL_THRESHOLD 12  // Threshold for accelerometer movement
 #define DISTANCE 30.0       // Minimal distance between two fixes to keep checking gps
 #define FIX_DELAY 60000     // Delay (ms) between checking gps coordinates
@@ -76,8 +74,8 @@ void setup()
 
   delay(100);
 
-  DEBUG_STREAM.begin(baud);
-  MODEM_STREAM.begin(baud);
+  DEBUG_STREAM.begin(57600);
+  MODEM_STREAM.begin(9600);
   
   DEBUG_STREAM.println("Initializing and connecting... ");
 
@@ -96,7 +94,12 @@ void setup()
   DEBUG_STREAM.println();
 
   DEBUG_STREAM.println("Getting initial GPS fix");
-  readCoordinates();  // Get initial gps fix
+  if(!gps.readCoordinates(30))  // Try 30 times to get initial GPS fix
+    DEBUG_STREAM.println("No fix found. Sending default");
+  else
+    DEBUG_STREAM.println("Sending initial fix");
+  sendCoordinatesAndMotion(false);
+  
   accelerometer.getXYZ(&prevX, &prevY, &prevZ);  // Get initial accelerometer state
 
   DEBUG_STREAM.println("Ready to guard your stuff");
@@ -115,7 +118,7 @@ void loop()
   {
     // Start looking for coordinates
     DEBUG_STREAM.println("Movement detected. Searching GPS fix");
-    readCoordinates();
+    gps.readCoordinates();
     
     if(gps.calcDistance(prevLatitude, prevLongitude) <= DISTANCE)  // We did not move much. Back to checking accelerometer for movement
     {
@@ -154,17 +157,6 @@ bool isAccelerating()
   }
 
   return result; 
-}
-
-// Try reading GPS coordinates
-void readCoordinates()
-{
-  while(gps.readCoordinates() == false)
-  {
-    DEBUG_STREAM.print(".");
-    delay(1000);                 
-  }
-  DEBUG_STREAM.println();
 }
 
 // Send GPS coordinates and motion to the AllThingsTalk cloud

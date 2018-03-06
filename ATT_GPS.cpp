@@ -31,9 +31,35 @@ ATT_GPS::ATT_GPS(int p1,int p2) : SoftSerial(SoftwareSerial(p1,p2))
   SoftSerial.begin(9600);  // reading GPS values from debugSerial connection with GPS
 }
 
+// Try reading GPS coordinates till fix is found or amount of attempts is exceeded
+bool ATT_GPS::readCoordinates(int amount)
+{
+  int attempt = 0; 
+  while(readCoordinate() == false && attempt < amount)
+  {
+    Serial.print(".");
+    delay(1000);
+    attempt++;
+  }
+  Serial.println();
+  
+  return attempt==amount ? false : true;  // return false if we reached maximum attempts, true if we found a fix
+}
+
+// Try reading GPS coordinates till fix is found
+void ATT_GPS::readCoordinates()
+{
+  while(readCoordinate() == false)
+  {
+    Serial.print(".");
+    delay(1000);
+  }
+  Serial.println();
+}
+
 // try to read the gps coordinates from the text stream that was received from the gps module
 // returns true when gps coordinates were found in the input, otherwise false
-bool ATT_GPS::readCoordinates()
+bool ATT_GPS::readCoordinate()
 {
   // sensor can return multiple types of data
   // we need to capture lines that start with $GPGGA
