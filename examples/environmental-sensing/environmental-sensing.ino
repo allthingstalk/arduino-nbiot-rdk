@@ -35,6 +35,7 @@
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BME280.h>
+#include "Seeed_BME280.h"
 #include "AirQuality2.h"
 
 // Mbili support
@@ -61,7 +62,8 @@ ATT_NBIOT device;
 #define SoundSensorPin A4
 
 AirQuality2 airqualitysensor;
-Adafruit_BME280 tph; // I2C
+Adafruit_BME280 tph1; // I2C
+BME280 tph2;
 
 float soundValue;
 float lightValue;
@@ -69,6 +71,7 @@ float temp;
 float hum;
 float pres;
 int16_t airValue;
+uint8_t sensorType;
 
 void setup() 
 {
@@ -120,9 +123,22 @@ void initSensors()
   pinMode(SoundSensorPin, INPUT);
   pinMode(LightSensorPin, INPUT);
   
-  tph.begin();
+  initTphSensor();
   airqualitysensor.init(AirQualityPin);
   DEBUG_STREAM.println("Done");
+}
+
+void initTphSensor() {
+  if (tph1.begin()) {
+    // Sensor will use Adafruit Library
+    sensorType = 1;
+  } else if (tph2.init()) {
+    // Sensor will use Seeed Library
+    sensorType = 2;
+  } else {    
+    DEBUG_STREAM.println("Could not initialize TPH sensor, please check wiring");
+    exit(0);
+  }
 }
 
 void readSensors()
@@ -134,11 +150,22 @@ void readSensors()
   lightValue = analogRead(LightSensorPin);
   lightValue = lightValue * 3.3 / 1023;  // Convert to lux based on the voltage that the sensor receives
   lightValue = pow(10, lightValue);
-    
-  temp = tph.readTemperature();
-  hum = tph.readHumidity();
-  pres = tph.readPressure()/100.0;
-    
+
+  if (sensorType == 1) {
+    temp = tph1.readTemperature();
+    hum = tph1.readHumidity();
+    pres = tph1.readPressure()/100.0;
+    return true;
+  } else if (sensorType == 2) {
+    temp = tph2.getTemperature();
+    hum = tph2.getHumidity();
+    pres = tph2.getPressure();
+    return true;
+  } else {
+    DEBUG_STREAM.println("Failed to get Temperature/Humidity data this time.");
+    return false;
+  }
+
   airValue = airqualitysensor.getRawData();
 }
 
