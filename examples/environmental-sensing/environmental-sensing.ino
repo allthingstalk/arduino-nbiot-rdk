@@ -159,7 +159,7 @@ void readSensors()
   } else if (sensorType == 2) {
     temp = tph2.getTemperature();
     hum = tph2.getHumidity();
-    pres = tph2.getPressure();
+    pres = tph2.getPressure()/100.0;
     return true;
   } else {
     DEBUG_STREAM.println("Failed to get Temperature/Humidity data this time.");
